@@ -1,0 +1,157 @@
+import 'dart:math';
+
+class EquationManager {
+  int level;
+  late int target;
+  List<String> currentEquation = [];
+  final Random _random = Random();
+
+  EquationManager({required this.level}) {
+    _generateTarget();
+  }
+
+  void _generateTarget() {
+    // Generate target based on level
+    switch (level) {
+      case 1:
+        target = _random.nextInt(15) + 5; // 5-19
+        break;
+      case 2:
+        target = _random.nextInt(20) + 5; // 5-24
+        break;
+      case 3:
+        target = _random.nextInt(30) + 10; // 10-39
+        break;
+      default:
+        target = _random.nextInt(50) + 10; // 10-59
+    }
+  }
+
+  List<String> getAvailableValues() {
+    List<String> values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    
+    switch (level) {
+      case 1:
+        values.add('+');
+        break;
+      case 2:
+        values.addAll(['+', '-']);
+        break;
+      case 3:
+      default:
+        values.addAll(['+', '-', '×', '÷']);
+    }
+    
+    return values;
+  }
+
+  void addToEquation(String value) {
+    // Prevent adding operators at the start or consecutively
+    if (_isOperator(value)) {
+      if (currentEquation.isEmpty) return;
+      if (currentEquation.isNotEmpty && _isOperator(currentEquation.last)) {
+        return;
+      }
+    }
+    
+    currentEquation.add(value);
+  }
+
+  void removeLastFromEquation() {
+    if (currentEquation.isNotEmpty) {
+      currentEquation.removeLast();
+    }
+  }
+
+  bool _isOperator(String value) {
+    return value == '+' || value == '-' || value == '×' || value == '÷';
+  }
+
+  bool validateEquation() {
+    if (currentEquation.isEmpty) return false;
+    if (_isOperator(currentEquation.last)) return false;
+    
+    try {
+      final result = _evaluateEquation();
+      return result == target;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  double _evaluateEquation() {
+    if (currentEquation.isEmpty) return 0;
+    
+    // Build a list of numbers and operators
+    List<dynamic> tokens = [];
+    String currentNumber = '';
+    
+    for (String char in currentEquation) {
+      if (_isOperator(char)) {
+        if (currentNumber.isNotEmpty) {
+          tokens.add(double.parse(currentNumber));
+          currentNumber = '';
+        }
+        tokens.add(char);
+      } else {
+        currentNumber += char;
+      }
+    }
+    
+    if (currentNumber.isNotEmpty) {
+      tokens.add(double.parse(currentNumber));
+    }
+    
+    // Handle multiplication and division first
+    for (int i = 1; i < tokens.length; i += 2) {
+      if (tokens[i] == '×' || tokens[i] == '÷') {
+        double left = tokens[i - 1] as double;
+        double right = tokens[i + 1] as double;
+        double result;
+        
+        if (tokens[i] == '×') {
+          result = left * right;
+        } else {
+          if (right == 0) throw Exception('Division by zero');
+          result = left / right;
+        }
+        
+        tokens[i - 1] = result;
+        tokens.removeRange(i, i + 2);
+        i -= 2;
+      }
+    }
+    
+    // Handle addition and subtraction
+    double result = tokens[0] as double;
+    for (int i = 1; i < tokens.length; i += 2) {
+      String operator = tokens[i] as String;
+      double operand = tokens[i + 1] as double;
+      
+      if (operator == '+') {
+        result += operand;
+      } else if (operator == '-') {
+        result -= operand;
+      }
+    }
+    
+    return result;
+  }
+
+  String getEquationString() {
+    return currentEquation.join(' ');
+  }
+
+  void reset() {
+    currentEquation.clear();
+  }
+
+  void levelUp(int newLevel) {
+    level = newLevel;
+    currentEquation.clear();
+    _generateTarget();
+  }
+
+  int getLevel() => level;
+  int getTarget() => target;
+}
