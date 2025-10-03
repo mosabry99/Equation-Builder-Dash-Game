@@ -163,4 +163,75 @@ class EquationManager {
 
   int getLevel() => level;
   int getTarget() => target;
+  
+  // Get current equation result (if valid)
+  int? getCurrentResult() {
+    if (currentEquation.isEmpty) return null;
+    if (_isOperator(currentEquation.last)) return null;
+    
+    try {
+      final result = _evaluateEquation();
+      return result.round();
+    } catch (e) {
+      return null;
+    }
+  }
+  
+  // Check if current equation equals target
+  bool equalsTarget() {
+    final result = getCurrentResult();
+    return result != null && result == target;
+  }
+  
+  // Check if it's still possible to reach target
+  bool canStillReachTarget() {
+    if (currentEquation.isEmpty) return true;
+    
+    try {
+      final currentResult = getCurrentResult();
+      if (currentResult == null) return true; // Still building equation
+      
+      // If we've already exceeded target significantly with multiplication/division available
+      if (level >= 3) {
+        // With multiply/divide, we can still reach many values
+        return true;
+      }
+      
+      // For addition/subtraction only (levels 1-2)
+      // If current result is much higher than target, it may be impossible
+      if (currentResult > target + 50) return false;
+      
+      // Still possible to reach
+      return true;
+    } catch (e) {
+      return true; // If we can't evaluate, assume it's still possible
+    }
+  }
+  
+  // Check if equation is impossible to reach target
+  bool isImpossibleToReachTarget() {
+    if (currentEquation.isEmpty) return false;
+    
+    try {
+      final currentResult = getCurrentResult();
+      if (currentResult == null) return false;
+      
+      // Check if we've collected enough numbers that make it impossible
+      // For level 1 (only addition), if we're way over, it's impossible
+      if (level == 1 && currentResult > target + 20) {
+        return true;
+      }
+      
+      // For level 2 (addition and subtraction), we have more flexibility
+      if (level == 2 && currentResult > target + 50) {
+        // Even with subtraction, it might be hard
+        return true;
+      }
+      
+      // For levels with multiply/divide, almost always possible
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
 }
