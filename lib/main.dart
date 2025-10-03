@@ -96,13 +96,13 @@ class _GameScreenState extends State<GameScreen> {
                   color: (_settings.isDarkMode
                           ? const Color(0xFF1a1f3a)
                           : Colors.white)
-                      .withOpacity(0.9),
+                      .withValues(alpha: 0.9),
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: (_settings.isDarkMode
                             ? const Color(0xFF00ffff)
                             : const Color(0xFF1976d2))
-                        .withOpacity(0.5),
+                        .withValues(alpha: 0.5),
                     width: 2,
                   ),
                   boxShadow: [
@@ -110,7 +110,7 @@ class _GameScreenState extends State<GameScreen> {
                       color: (_settings.isDarkMode
                               ? const Color(0xFF00ffff)
                               : const Color(0xFF1976d2))
-                          .withOpacity(0.3),
+                          .withValues(alpha: 0.3),
                       blurRadius: 10,
                       spreadRadius: 2,
                     ),

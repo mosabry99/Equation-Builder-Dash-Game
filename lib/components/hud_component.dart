@@ -1,17 +1,19 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import '../managers/equation_manager.dart';
+import '../managers/settings_manager.dart';
 
-class HudComponent extends PositionComponent with HasGameRef {
+class HudComponent extends PositionComponent with HasGameReference {
   final EquationManager equationManager;
   final VoidCallback onSubmit;
+  final SettingsManager settings = SettingsManager();
   
   final Paint glassPaint = Paint()
-    ..color = const Color(0xFF1a1f3a).withOpacity(0.85)
+    ..color = const Color(0xFF1a1f3a).withValues(alpha: 0.85)
     ..style = PaintingStyle.fill;
     
   final Paint borderPaint = Paint()
-    ..color = const Color(0xFF00ffff).withOpacity(0.5)
+    ..color = const Color(0xFF00ffff).withValues(alpha: 0.5)
     ..style = PaintingStyle.stroke
     ..strokeWidth = 2;
 
@@ -48,7 +50,7 @@ class HudComponent extends PositionComponent with HasGameRef {
       ..color = (settings.isDarkMode
               ? const Color(0xFF00ffff)
               : const Color(0xFF1976d2))
-          .withOpacity(0.15)
+          .withValues(alpha: 0.15)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
     canvas.drawRRect(rrect, glowPaint);
     

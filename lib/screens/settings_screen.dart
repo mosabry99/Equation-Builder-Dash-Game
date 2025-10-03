@@ -88,7 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 _settings.setDarkMode(value);
                               });
                             },
-                            activeColor: const Color(0xFF00ffff),
+                            activeThumbColor: const Color(0xFF00ffff),
                           ),
                         ),
                       ],
@@ -114,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 _settings.setSoundEnabled(value);
                               });
                             },
-                            activeColor: const Color(0xFF00ffff),
+                            activeThumbColor: const Color(0xFF00ffff),
                           ),
                         ),
                         _buildSettingTile(
@@ -132,7 +132,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 _settings.setMusicEnabled(value);
                               });
                             },
-                            activeColor: const Color(0xFF00ffff),
+                            activeThumbColor: const Color(0xFF00ffff),
                           ),
                         ),
                       ],
@@ -196,12 +196,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         color: (_settings.isDarkMode
                 ? const Color(0xFF1a1f3a)
                 : Colors.white)
-            .withOpacity(0.9),
+            .withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: _settings.isDarkMode
-              ? const Color(0xFF00ffff).withOpacity(0.3)
-              : const Color(0xFF1976d2).withOpacity(0.3),
+              ? const Color(0xFF00ffff).withValues(alpha: 0.3)
+              : const Color(0xFF1976d2).withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: [
@@ -209,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             color: (_settings.isDarkMode
                     ? const Color(0xFF00ffff)
                     : const Color(0xFF1976d2))
-                .withOpacity(0.2),
+                .withValues(alpha: 0.2),
             blurRadius: 15,
             spreadRadius: 2,
           ),
@@ -251,7 +251,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           color: (_settings.isDarkMode
                   ? const Color(0xFF00ffff)
                   : const Color(0xFF1976d2))
-              .withOpacity(0.2),
+              .withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(

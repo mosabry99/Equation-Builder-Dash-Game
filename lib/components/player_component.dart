@@ -2,17 +2,18 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-class PlayerComponent extends PositionComponent with HasGameRef, CollisionCallbacks {
+class PlayerComponent extends PositionComponent with HasGameReference, CollisionCallbacks {
   final void Function(String value) onCollectItem;
   double moveSpeed = 300.0;
   Vector2 velocity = Vector2.zero();
+  double animationTime = 0.0;
   
   final Paint playerPaint = Paint()
     ..color = const Color(0xFF00ffff)
     ..style = PaintingStyle.fill;
     
   final Paint glowPaint = Paint()
-    ..color = const Color(0xFF00ffff).withOpacity(0.3)
+    ..color = const Color(0xFF00ffff).withValues(alpha: 0.3)
     ..style = PaintingStyle.fill
     ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
 
