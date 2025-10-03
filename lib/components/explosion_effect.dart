@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import '../managers/settings_manager.dart';
+import '../managers/theme_manager.dart';
 
 class ExplosionEffect extends PositionComponent with HasGameReference {
   final Random _random = Random();
@@ -8,6 +10,8 @@ class ExplosionEffect extends PositionComponent with HasGameReference {
   double lifetime = 0;
   final double maxLifetime = 2.0;
   bool shakeApplied = false;
+  final SettingsManager settings = SettingsManager();
+  late GameTheme theme;
   
   static final List<String> funnyMessages = [
     'OOPS! 💥',
@@ -21,12 +25,13 @@ class ExplosionEffect extends PositionComponent with HasGameReference {
   
   late String selectedMessage;
 
-  ExplosionEffect({required Vector2 position})
+  ExplosionEffect({required Vector2 position, required this.settings})
       : super(
           position: position,
           anchor: Anchor.center,
           priority: 50,
         ) {
+    theme = GameTheme(isDark: settings.isDarkMode);
     selectedMessage = funnyMessages[_random.nextInt(funnyMessages.length)];
     _generateParticles();
   }
@@ -46,13 +51,7 @@ class ExplosionEffect extends PositionComponent with HasGameReference {
   }
 
   Color _getRandomExplosionColor() {
-    final colors = [
-      const Color(0xFFff6b6b),
-      const Color(0xFFffd93d),
-      const Color(0xFFff8c42),
-      const Color(0xFFffee58),
-    ];
-    return colors[_random.nextInt(colors.length)];
+    return theme.particleColors[_random.nextInt(theme.particleColors.length)];
   }
 
   @override

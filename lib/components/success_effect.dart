@@ -1,19 +1,24 @@
 import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import '../managers/settings_manager.dart';
+import '../managers/theme_manager.dart';
 
 class SuccessEffect extends PositionComponent with HasGameReference {
   final Random _random = Random();
   final List<_Confetti> _confetti = [];
   double lifetime = 0;
   final double maxLifetime = 2.0;
+  final SettingsManager settings = SettingsManager();
+  late GameTheme theme;
 
-  SuccessEffect({required Vector2 position})
+  SuccessEffect({required Vector2 position, required this.settings})
       : super(
           position: position,
           anchor: Anchor.center,
           priority: 50,
         ) {
+    theme = GameTheme(isDark: settings.isDarkMode);
     _generateConfetti();
   }
 
@@ -34,15 +39,7 @@ class SuccessEffect extends PositionComponent with HasGameReference {
   }
 
   Color _getRandomConfettiColor() {
-    final colors = [
-      const Color(0xFF00ffff),
-      const Color(0xFFffd93d),
-      const Color(0xFF6c5ce7),
-      const Color(0xFFff6b6b),
-      const Color(0xFF26de81),
-      const Color(0xFFfe9c8f),
-    ];
-    return colors[_random.nextInt(colors.length)];
+    return theme.confettiColors[_random.nextInt(theme.confettiColors.length)];
   }
 
   @override

@@ -1,21 +1,17 @@
+import 'dart:math' as math;
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import '../managers/settings_manager.dart';
+import '../managers/theme_manager.dart';
 
 class PlayerComponent extends PositionComponent with HasGameReference, CollisionCallbacks {
   final void Function(String value) onCollectItem;
   double moveSpeed = 300.0;
   Vector2 velocity = Vector2.zero();
   double animationTime = 0.0;
-  
-  final Paint playerPaint = Paint()
-    ..color = const Color(0xFF00ffff)
-    ..style = PaintingStyle.fill;
-    
-  final Paint glowPaint = Paint()
-    ..color = const Color(0xFF00ffff).withValues(alpha: 0.3)
-    ..style = PaintingStyle.fill
-    ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
+  final SettingsManager settings = SettingsManager();
+  late GameTheme theme;
 
   PlayerComponent({
     required Vector2 position,
@@ -29,6 +25,7 @@ class PlayerComponent extends PositionComponent with HasGameReference, Collision
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    theme = GameTheme(isDark: settings.isDarkMode);
     add(RectangleHitbox());
   }
 
@@ -64,20 +61,45 @@ class PlayerComponent extends PositionComponent with HasGameReference, Collision
   void render(Canvas canvas) {
     super.render(canvas);
     
-    // Draw glow effect
+    // Update theme
+    theme = GameTheme(isDark: settings.isDarkMode);
+    
+    // Pulse animation
+    final pulseScale = 1.0 + math.sin(animationTime * 3) * 0.05;
+    
+    // Draw glow effect with pulse
+    final glowPaint = Paint()
+      ..color = theme.playerGlow
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
+    
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromCenter(
           center: (size / 2).toOffset(),
-          width: size.x + 10,
-          height: size.y + 10,
+          width: (size.x + 15) * pulseScale,
+          height: (size.y + 15) * pulseScale,
         ),
-        const Radius.circular(12),
+        Radius.circular(12 * pulseScale),
       ),
       glowPaint,
     );
     
-    // Draw player
+    // Draw gradient background
+    final playerPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          theme.playerColor,
+          theme.playerColor.withValues(alpha: 0.8),
+        ],
+      ).createShader(Rect.fromCenter(
+        center: (size / 2).toOffset(),
+        width: size.x,
+        height: size.y,
+      ));
+    
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromCenter(
@@ -88,6 +110,22 @@ class PlayerComponent extends PositionComponent with HasGameReference, Collision
         const Radius.circular(10),
       ),
       playerPaint,
+    );
+    
+    // Draw border
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: (size / 2).toOffset(),
+          width: size.x,
+          height: size.y,
+        ),
+        const Radius.circular(10),
+      ),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.4)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
     );
     
     // Draw eyes
