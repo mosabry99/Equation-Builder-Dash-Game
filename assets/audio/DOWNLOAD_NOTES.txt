@@ -1,0 +1,20 @@
+Game Audio Assets
+=================
+
+✅ Downloaded Successfully:
+- background.mp3 (4.5MB) - Background game music
+- collect.mp3 (66KB) - Item collection sound
+- click.mp3 (77KB) - UI click/button sound
+
+⚠️ Need Manual Download:
+For correct.mp3 and wrong.mp3, please download from:
+- https://pixabay.com/sound-effects/search/success/ (for correct sound)
+- https://pixabay.com/sound-effects/search/error/ (for wrong sound)
+- https://mixkit.co/free-sound-effects/game/
+- https://freesound.org/
+
+Alternative: Use soundeffect generators at:
+- https://sfxr.me/
+- https://www.bfxr.net/
+
+License: All Pixabay audio is royalty-free for commercial use.

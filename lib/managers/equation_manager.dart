@@ -30,16 +30,25 @@ class EquationManager {
   List<String> getAvailableValues() {
     List<String> values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     
+    // Increase operator frequency by adding them multiple times
     switch (level) {
       case 1:
-        values.add('+');
+        // Add '+' operator 3 times for higher spawn rate
+        values.addAll(['+', '+', '+']);
         break;
       case 2:
-        values.addAll(['+', '-']);
+        // Add operators 3 times each
+        values.addAll(['+', '+', '+', '-', '-', '-']);
         break;
       case 3:
       default:
-        values.addAll(['+', '-', '×', '÷']);
+        // Add all operators 3 times each for frequent spawning
+        values.addAll([
+          '+', '+', '+',
+          '-', '-', '-',
+          '×', '×', '×',
+          '÷', '÷', '÷',
+        ]);
     }
     
     return values;

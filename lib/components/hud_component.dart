@@ -21,8 +21,8 @@ class HudComponent extends PositionComponent with HasGameReference {
   Future<void> onLoad() async {
     await super.onLoad();
     theme = GameTheme(isDark: settings.isDarkMode);
-    position = Vector2(20, 40);
-    size = Vector2(game.size.x - 40, 140); // Increased height
+    position = Vector2(15, 35);
+    size = Vector2(game.size.x - 30, 160); // Increased height for better spacing
   }
 
   void updateDisplay() {
@@ -61,78 +61,130 @@ class HudComponent extends PositionComponent with HasGameReference {
       ..strokeWidth = 2;
     canvas.drawRRect(rrect, borderPaint);
     
-    // Draw level and score in row
+    // ROW 1: Level (left) | Score (center) | Target (right)
+    // Level on the left
     _drawText(
       canvas,
       'LV ${equationManager.getLevel()}',
-      20,
       15,
-      18,
-      const Color(0xFFffd93d),
+      12,
+      16,
+      theme.tertiaryAccent,
       FontWeight.bold,
     );
     
-    // Draw score on the right
-    final scoreText = 'SCORE: ${_getScore()}';
-    final scorePainter = TextPainter(
+    // Score in the center
+    final scoreText = '${_getScore()}pts';
+    final scoreTextPainter = TextPainter(
       text: TextSpan(
         text: scoreText,
-        style: const TextStyle(
-          color: Color(0xFF26de81),
-          fontSize: 18,
+        style: TextStyle(
+          color: theme.successColor,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
+          shadows: const [
+            Shadow(
+              color: Colors.black45,
+              offset: Offset(1, 1),
+              blurRadius: 2,
+            ),
+          ],
         ),
       ),
       textDirection: TextDirection.ltr,
     );
-    scorePainter.layout();
-    scorePainter.paint(canvas, Offset(size.x - scorePainter.width - 20, 15));
+    scoreTextPainter.layout();
+    scoreTextPainter.paint(
+      canvas,
+      Offset((size.x - scoreTextPainter.width) / 2, 10),
+    );
     
-    // Draw target with enhanced styling
+    // Target on the right
+    final targetText = '🎯 ${equationManager.getTarget()}';
+    final targetTextPainter = TextPainter(
+      text: TextSpan(
+        text: targetText,
+        style: TextStyle(
+          color: theme.primaryAccent,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          shadows: const [
+            Shadow(
+              color: Colors.black45,
+              offset: Offset(1, 1),
+              blurRadius: 2,
+            ),
+          ],
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    targetTextPainter.layout();
+    targetTextPainter.paint(
+      canvas,
+      Offset(size.x - targetTextPainter.width - 15, 10),
+    );
+    
+    // Divider line
+    final dividerPaint = Paint()
+      ..color = theme.hudBorder
+      ..strokeWidth = 1;
+    canvas.drawLine(
+      Offset(15, 42),
+      Offset(size.x - 15, 42),
+      dividerPaint,
+    );
+    
+    // ROW 2: Current equation with label
     _drawText(
       canvas,
-      'TARGET: ${equationManager.getTarget()}',
-      20,
+      'EQUATION:',
+      15,
       50,
-      26,
-      settings.isDarkMode ? const Color(0xFF00ffff) : const Color(0xFF1976d2),
-      FontWeight.bold,
+      12,
+      theme.textSecondary,
+      FontWeight.w600,
     );
     
     // Draw current equation with box
     final equation = equationManager.getEquationString();
     final equationRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(15, 85, size.x - 30, 35),
-      const Radius.circular(10),
+      Rect.fromLTWH(15, 70, size.x - 30, 40),
+      const Radius.circular(12),
     );
     
     final equationBoxPaint = Paint()
-      ..color = (settings.isDarkMode
-              ? Colors.black26
-              : Colors.white24);
+      ..color = theme.cardBackground.withValues(alpha: 0.3);
     canvas.drawRRect(equationRect, equationBoxPaint);
+    
+    // Border for equation box
+    final equationBorderPaint = Paint()
+      ..color = theme.cardBorder
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    canvas.drawRRect(equationRect, equationBorderPaint);
     
     _drawText(
       canvas,
-      equation.isEmpty ? 'Collect numbers & operators...' : equation,
-      20,
-      92,
-      20,
+      equation.isEmpty ? 'Start collecting...' : equation,
+      22,
+      80,
+      22,
       equation.isEmpty 
-          ? (settings.isDarkMode ? Colors.white38 : Colors.black38)
-          : (settings.isDarkMode ? Colors.white : Colors.black87),
+          ? theme.textTertiary
+          : theme.textPrimary,
       FontWeight.w600,
     );
     
-    // Draw hint text at bottom
+    // ROW 3: Hint text at bottom
     _drawText(
       canvas,
-      'TAP sides • SPACE/ENTER • BACKSPACE',
+      '← TAP SIDES → • SPACE/ENTER • BACKSPACE',
       size.x / 2,
-      size.y - 8,
-      9,
-      settings.isDarkMode ? Colors.white60 : Colors.black54,
-      FontWeight.normal,
+      size.y - 22,
+      10,
+      theme.textSecondary,
+      FontWeight.w500,
       TextAlign.center,
     );
   }
