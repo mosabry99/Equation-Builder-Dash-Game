@@ -5,6 +5,7 @@ import 'game/equation_builder_game.dart';
 import 'screens/splash_screen.dart';
 import 'screens/settings_screen.dart';
 import 'managers/settings_manager.dart';
+import 'widgets/game_over_dialog.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -92,7 +93,24 @@ class _GameScreenState extends State<GameScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          GameWidget(game: _game),
+          GameWidget(
+            game: _game,
+            overlayBuilderMap: {
+              'gameOver': (BuildContext context, EquationBuilderGame game) {
+                return GameOverDialog(
+                  title: 'Game Over!',
+                  message: 'You can\'t reach the target with these numbers.\nWould you like to restart or quit?',
+                  isDarkMode: _settings.isDarkMode,
+                  onRestart: () {
+                    game.restartGame();
+                  },
+                  onQuit: () {
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+            },
+          ),
           
           // Settings button
           Positioned(
