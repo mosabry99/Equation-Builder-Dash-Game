@@ -2,20 +2,13 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import '../managers/equation_manager.dart';
 import '../managers/settings_manager.dart';
+import '../managers/theme_manager.dart';
 
 class HudComponent extends PositionComponent with HasGameReference {
   final EquationManager equationManager;
   final VoidCallback onSubmit;
   final SettingsManager settings = SettingsManager();
-  
-  final Paint glassPaint = Paint()
-    ..color = const Color(0xFF1a1f3a).withValues(alpha: 0.85)
-    ..style = PaintingStyle.fill;
-    
-  final Paint borderPaint = Paint()
-    ..color = const Color(0xFF00ffff).withValues(alpha: 0.5)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2;
+  late GameTheme theme;
 
   HudComponent({
     required this.equationManager,
@@ -27,17 +20,21 @@ class HudComponent extends PositionComponent with HasGameReference {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    theme = GameTheme(isDark: settings.isDarkMode);
     position = Vector2(20, 40);
-    size = Vector2(game.size.x - 40, 120);
+    size = Vector2(game.size.x - 40, 140); // Increased height
   }
 
   void updateDisplay() {
-    // Force re-render
+    theme = GameTheme(isDark: settings.isDarkMode);
   }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
+    
+    // Update theme
+    theme = GameTheme(isDark: settings.isDarkMode);
     
     // Draw glassmorphism background with enhanced glow
     final rrect = RRect.fromRectAndRadius(
@@ -47,14 +44,21 @@ class HudComponent extends PositionComponent with HasGameReference {
     
     // Draw outer glow
     final glowPaint = Paint()
-      ..color = (settings.isDarkMode
-              ? const Color(0xFF00ffff)
-              : const Color(0xFF1976d2))
-          .withValues(alpha: 0.15)
+      ..color = theme.hudGlow
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
     canvas.drawRRect(rrect, glowPaint);
     
+    // Draw background
+    final glassPaint = Paint()
+      ..color = theme.hudBackground
+      ..style = PaintingStyle.fill;
     canvas.drawRRect(rrect, glassPaint);
+    
+    // Draw border
+    final borderPaint = Paint()
+      ..color = theme.hudBorder
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
     canvas.drawRRect(rrect, borderPaint);
     
     // Draw level and score in row

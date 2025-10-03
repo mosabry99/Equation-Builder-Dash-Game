@@ -3,6 +3,8 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'player_component.dart';
+import '../managers/settings_manager.dart';
+import '../managers/theme_manager.dart';
 
 class FallingComponent extends PositionComponent with HasGameReference, CollisionCallbacks {
   final String value;
@@ -10,22 +12,16 @@ class FallingComponent extends PositionComponent with HasGameReference, Collisio
   bool collected = false;
   double animationTime = 0.0;
   double rotation = 0.0;
-  
-  final Paint bgPaint = Paint()
-    ..color = const Color(0xFF6c5ce7)
-    ..style = PaintingStyle.fill;
-    
-  final Paint glowPaint = Paint()
-    ..color = const Color(0xFF6c5ce7).withValues(alpha: 0.4)
-    ..style = PaintingStyle.fill
-    ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+  final SettingsManager settings = SettingsManager();
+  late GameTheme theme;
   
   // Helper getters
-  Color get itemColor => _isOperator
-      ? const Color(0xFFff6b6b) // Red for operators
-      : const Color(0xFF4ecdc4); // Cyan for numbers
-  
   bool get _isOperator => ['+', '-', '*', '/'].contains(value);
+  
+  Color get itemColor {
+    theme = GameTheme(isDark: settings.isDarkMode);
+    return _isOperator ? theme.operatorColor : theme.numberColor;
+  }
 
   FallingComponent({
     required this.value,
@@ -78,6 +74,11 @@ class FallingComponent extends PositionComponent with HasGameReference, Collisio
     final pulseScale = 1.0 + math.sin(animationTime * 3) * 0.05;
     
     // Draw outer glow with pulse
+    final glowPaint = Paint()
+      ..color = itemColor.withValues(alpha: 0.4)
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+    
     canvas.drawCircle(
       (size / 2).toOffset(),
       (size.x / 2 + 8) * pulseScale,

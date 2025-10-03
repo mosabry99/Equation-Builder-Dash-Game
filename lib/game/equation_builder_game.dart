@@ -106,7 +106,10 @@ class EquationBuilderGame extends FlameGame
 
   void _handleSuccess() {
     // Add success effect
-    add(SuccessEffect(position: size / 2));
+    add(SuccessEffect(position: size / 2, settings: settings));
+    
+    // Update score
+    score += (level * 10);
     
     // Level up
     level++;
@@ -122,11 +125,15 @@ class EquationBuilderGame extends FlameGame
 
   void _handleFailure() {
     // Add explosion effect
-    add(ExplosionEffect(position: player.position.clone()));
+    add(ExplosionEffect(position: player.position.clone(), settings: settings));
     
     // Reset equation
     equationManager.reset();
     hud.updateDisplay();
+  }
+  
+  int getScore() {
+    return score;
   }
 
   @override
