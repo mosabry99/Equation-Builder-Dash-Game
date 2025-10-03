@@ -9,7 +9,7 @@ class SuccessEffect extends PositionComponent with HasGameReference {
   final List<_Confetti> _confetti = [];
   double lifetime = 0;
   final double maxLifetime = 2.0;
-  final SettingsManager settings = SettingsManager();
+  final SettingsManager settings;
   late GameTheme theme;
 
   SuccessEffect({required Vector2 position, required this.settings})
