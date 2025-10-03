@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flame/game.dart';
 import 'game/equation_builder_game.dart';
 import 'screens/splash_screen.dart';
 import 'screens/main_menu_screen.dart';
 import 'screens/settings_screen.dart';
 import 'managers/settings_manager.dart';
+import 'managers/storage_manager.dart';
+import 'l10n/app_localizations.dart';
 import 'widgets/game_over_dialog.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize storage
+  await StorageManager().initialize();
   
   // Lock to portrait mode
   SystemChrome.setPreferredOrientations([
@@ -30,6 +36,18 @@ class EquationBuilderApp extends StatefulWidget {
 class _EquationBuilderAppState extends State<EquationBuilderApp> {
   bool _showSplash = true;
   final SettingsManager _settings = SettingsManager();
+  late Locale _locale;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocale();
+  }
+
+  void _loadLocale() {
+    final languageCode = StorageManager().getLanguage();
+    _locale = Locale(languageCode);
+  }
 
   void _updateTheme() {
     setState(() {
@@ -37,11 +55,30 @@ class _EquationBuilderAppState extends State<EquationBuilderApp> {
     });
   }
 
+  void changeLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+    StorageManager().saveLanguage(locale.languageCode);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Equation Builder Dash',
       debugShowCheckedModeBanner: false,
+      locale: _locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('ar'), // Arabic
+        Locale('fr'), // French
+      ],
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: const Color(0xFFe3f2fd),
         colorScheme: const ColorScheme.light(
