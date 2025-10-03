@@ -1,0 +1,11 @@
+Particle Image Note
+==================
+
+The particle.png file should be a 32x32 white circle on transparent background.
+
+You can create one using:
+1. Any image editor (Photoshop, GIMP, etc.)
+2. Online tools like pixlr.com
+3. ImageMagick: convert -size 32x32 xc:none -fill white -draw "circle 16,16 16,0" particle.png
+
+For now, the game will work without it - particle effects will use basic shapes.

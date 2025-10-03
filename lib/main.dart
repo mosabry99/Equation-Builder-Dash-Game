@@ -29,6 +29,12 @@ class _EquationBuilderAppState extends State<EquationBuilderApp> {
   bool _showSplash = true;
   final SettingsManager _settings = SettingsManager();
 
+  void _updateTheme() {
+    setState(() {
+      // Force rebuild with new theme
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,16 +42,16 @@ class _EquationBuilderAppState extends State<EquationBuilderApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: const Color(0xFFe3f2fd),
-        colorScheme: ColorScheme.light(
-          primary: const Color(0xFF1976d2),
-          secondary: const Color(0xFF00bcd4),
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF1976d2),
+          secondary: Color(0xFF00bcd4),
         ),
       ),
       darkTheme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: const Color(0xFF0a0e27),
-        colorScheme: ColorScheme.dark(
-          primary: const Color(0xFF00ffff),
-          secondary: const Color(0xFF6c5ce7),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF00ffff),
+          secondary: Color(0xFF6c5ce7),
         ),
       ),
       themeMode: _settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
@@ -57,13 +63,15 @@ class _EquationBuilderAppState extends State<EquationBuilderApp> {
                 });
               },
             )
-          : const GameScreen(),
+          : GameScreen(onThemeChanged: _updateTheme),
     );
   }
 }
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  final VoidCallback? onThemeChanged;
+  
+  const GameScreen({super.key, this.onThemeChanged});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -131,8 +139,10 @@ class _GameScreenState extends State<GameScreen> {
                       ),
                     );
                     setState(() {
-                      // Refresh to apply theme changes
+                      // Refresh game with new theme
+                      _game = EquationBuilderGame();
                     });
+                    widget.onThemeChanged?.call();
                   },
                 ),
               ),
