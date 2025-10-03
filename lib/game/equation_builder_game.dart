@@ -13,13 +13,15 @@ import '../components/explosion_effect.dart';
 import '../components/success_effect.dart';
 import '../managers/equation_manager.dart';
 import '../managers/settings_manager.dart';
+import '../managers/audio_manager.dart';
 
 class EquationBuilderGame extends FlameGame
-    with HasCollisionDetection, KeyboardEvents, TapDetector {
+    with HasCollisionDetection, TapDetector {
   late PlayerComponent player;
   late HudComponent hud;
   late EquationManager equationManager;
   final SettingsManager settings = SettingsManager();
+  final AudioManager audio = AudioManager();
   
   Timer? spawnTimer;
   double spawnInterval = 2.0;
@@ -47,6 +49,9 @@ class EquationBuilderGame extends FlameGame
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    
+    // Initialize audio
+    await audio.initialize();
     
     equationManager = EquationManager(level: level);
     
@@ -91,6 +96,7 @@ class EquationBuilderGame extends FlameGame
 
   void _onCollectItem(String value) {
     equationManager.addToEquation(value);
+    audio.playCollectSound();
     hud.updateDisplay();
   }
 
@@ -105,6 +111,9 @@ class EquationBuilderGame extends FlameGame
   }
 
   void _handleSuccess() {
+    // Play success sound
+    audio.playCorrectSound();
+    
     // Add success effect
     add(SuccessEffect(position: size / 2, settings: settings));
     
@@ -124,6 +133,9 @@ class EquationBuilderGame extends FlameGame
   }
 
   void _handleFailure() {
+    // Play wrong sound
+    audio.playWrongSound();
+    
     // Add explosion effect
     add(ExplosionEffect(position: player.position.clone(), settings: settings));
     
@@ -137,28 +149,19 @@ class EquationBuilderGame extends FlameGame
   }
 
   @override
-  KeyEventResult onKeyEvent(
-    KeyEvent event,
-    Set<LogicalKeyboardKey> keysPressed,
-  ) {
-    if (event is KeyDownEvent) {
-      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
-        player.moveLeft();
-        return KeyEventResult.handled;
-      } else if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
-        player.moveRight();
-        return KeyEventResult.handled;
-      } else if (keysPressed.contains(LogicalKeyboardKey.enter) ||
-          keysPressed.contains(LogicalKeyboardKey.space)) {
-        _checkEquation();
-        return KeyEventResult.handled;
-      } else if (keysPressed.contains(LogicalKeyboardKey.backspace)) {
-        equationManager.removeLastFromEquation();
-        hud.updateDisplay();
-        return KeyEventResult.handled;
-      }
+  void onTapDown(TapDownInfo info) {
+    super.onTapDown(info);
+    
+    // Get tap position
+    final tapX = info.eventPosition.global.x;
+    final screenWidth = size.x;
+    
+    // Left side tap = move left, Right side tap = move right
+    if (tapX < screenWidth / 2) {
+      player.moveLeft();
+    } else {
+      player.moveRight();
     }
-    return KeyEventResult.ignored;
   }
 
   @override
