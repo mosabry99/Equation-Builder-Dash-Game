@@ -37,19 +37,28 @@ class HudComponent extends PositionComponent with HasGameRef {
   void render(Canvas canvas) {
     super.render(canvas);
     
-    // Draw glassmorphism background
+    // Draw glassmorphism background with enhanced glow
     final rrect = RRect.fromRectAndRadius(
       Rect.fromLTWH(0, 0, size.x, size.y),
-      const Radius.circular(15),
+      const Radius.circular(20),
     );
+    
+    // Draw outer glow
+    final glowPaint = Paint()
+      ..color = (settings.isDarkMode
+              ? const Color(0xFF00ffff)
+              : const Color(0xFF1976d2))
+          .withOpacity(0.15)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
+    canvas.drawRRect(rrect, glowPaint);
     
     canvas.drawRRect(rrect, glassPaint);
     canvas.drawRRect(rrect, borderPaint);
     
-    // Draw level
+    // Draw level and score in row
     _drawText(
       canvas,
-      'LEVEL ${equationManager.getLevel()}',
+      'LV ${equationManager.getLevel()}',
       20,
       15,
       18,
@@ -57,40 +66,77 @@ class HudComponent extends PositionComponent with HasGameRef {
       FontWeight.bold,
     );
     
-    // Draw target
+    // Draw score on the right
+    final scoreText = 'SCORE: ${_getScore()}';
+    final scorePainter = TextPainter(
+      text: TextSpan(
+        text: scoreText,
+        style: const TextStyle(
+          color: Color(0xFF26de81),
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    scorePainter.layout();
+    scorePainter.paint(canvas, Offset(size.x - scorePainter.width - 20, 15));
+    
+    // Draw target with enhanced styling
     _drawText(
       canvas,
       'TARGET: ${equationManager.getTarget()}',
       20,
-      45,
-      24,
-      const Color(0xFF00ffff),
+      50,
+      26,
+      settings.isDarkMode ? const Color(0xFF00ffff) : const Color(0xFF1976d2),
       FontWeight.bold,
     );
     
-    // Draw current equation
+    // Draw current equation with box
     final equation = equationManager.getEquationString();
-    _drawText(
-      canvas,
-      equation.isEmpty ? '...' : equation,
-      20,
-      80,
-      20,
-      Colors.white,
-      FontWeight.normal,
+    final equationRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(15, 85, size.x - 30, 35),
+      const Radius.circular(10),
     );
     
-    // Draw hint text
+    final equationBoxPaint = Paint()
+      ..color = (settings.isDarkMode
+              ? Colors.black26
+              : Colors.white24);
+    canvas.drawRRect(equationRect, equationBoxPaint);
+    
     _drawText(
       canvas,
-      'SPACE/ENTER to submit • BACKSPACE to undo',
+      equation.isEmpty ? 'Collect numbers & operators...' : equation,
+      20,
+      92,
+      20,
+      equation.isEmpty 
+          ? (settings.isDarkMode ? Colors.white38 : Colors.black38)
+          : (settings.isDarkMode ? Colors.white : Colors.black87),
+      FontWeight.w600,
+    );
+    
+    // Draw hint text at bottom
+    _drawText(
+      canvas,
+      'TAP sides • SPACE/ENTER • BACKSPACE',
       size.x / 2,
-      size.y - 10,
-      10,
-      Colors.white60,
+      size.y - 8,
+      9,
+      settings.isDarkMode ? Colors.white60 : Colors.black54,
       FontWeight.normal,
       TextAlign.center,
     );
+  }
+  
+  int _getScore() {
+    try {
+      return (gameRef as dynamic).getScore();
+    } catch (e) {
+      return 0;
+    }
   }
 
   void _drawText(

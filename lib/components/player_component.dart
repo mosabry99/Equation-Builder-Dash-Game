@@ -43,6 +43,8 @@ class PlayerComponent extends PositionComponent with HasGameRef, CollisionCallba
   void update(double dt) {
     super.update(dt);
     
+    animationTime += dt;
+    
     // Apply velocity
     position.add(velocity * dt);
     
