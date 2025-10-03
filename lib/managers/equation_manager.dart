@@ -28,27 +28,15 @@ class EquationManager {
   }
 
   List<String> getAvailableValues() {
-    List<String> values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    // Only return numbers (no operators for simple sum mode)
+    List<String> values = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
     
-    // Increase operator frequency by adding them multiple times
-    switch (level) {
-      case 1:
-        // Add '+' operator 3 times for higher spawn rate
-        values.addAll(['+', '+', '+']);
-        break;
-      case 2:
-        // Add operators 3 times each
-        values.addAll(['+', '+', '+', '-', '-', '-']);
-        break;
-      case 3:
-      default:
-        // Add all operators 3 times each for frequent spawning
-        values.addAll([
-          '+', '+', '+',
-          '-', '-', '-',
-          '×', '×', '×',
-          '÷', '÷', '÷',
-        ]);
+    // Add more variety based on level
+    if (level >= 2) {
+      values.addAll(['10', '11', '12', '13', '14', '15']);
+    }
+    if (level >= 3) {
+      values.addAll(['16', '17', '18', '19', '20']);
     }
     
     return values;
@@ -164,17 +152,23 @@ class EquationManager {
   int getLevel() => level;
   int getTarget() => target;
   
+  // Get current sum of all collected numbers (simple addition)
+  int getCurrentSum() {
+    if (currentEquation.isEmpty) return 0;
+    
+    int sum = 0;
+    for (String value in currentEquation) {
+      if (!_isOperator(value)) {
+        sum += int.tryParse(value) ?? 0;
+      }
+    }
+    return sum;
+  }
+  
   // Get current equation result (if valid)
   int? getCurrentResult() {
-    if (currentEquation.isEmpty) return null;
-    if (_isOperator(currentEquation.last)) return null;
-    
-    try {
-      final result = _evaluateEquation();
-      return result.round();
-    } catch (e) {
-      return null;
-    }
+    // For simple sum mode, just return the sum
+    return getCurrentSum();
   }
   
   // Check if current equation equals target

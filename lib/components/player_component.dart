@@ -29,12 +29,26 @@ class PlayerComponent extends PositionComponent with HasGameReference, Collision
     add(RectangleHitbox());
   }
 
-  void moveLeft() {
+  // Continuous movement methods
+  void startMovingLeft() {
     velocity.x = -moveSpeed;
   }
 
-  void moveRight() {
+  void startMovingRight() {
     velocity.x = moveSpeed;
+  }
+  
+  void stopMoving() {
+    velocity.x = 0;
+  }
+  
+  // Legacy single-tap methods (now call continuous methods)
+  void moveLeft() {
+    startMovingLeft();
+  }
+
+  void moveRight() {
+    startMovingRight();
   }
 
   @override

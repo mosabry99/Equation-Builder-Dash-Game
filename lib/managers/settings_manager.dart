@@ -5,7 +5,7 @@ class SettingsManager {
 
   bool _isDarkMode = true;
   bool _isSoundEnabled = true;
-  bool _isMusicEnabled = false;
+  bool _isMusicEnabled = true; // Music enabled by default
 
   bool get isDarkMode => _isDarkMode;
   bool get isSoundEnabled => _isSoundEnabled;
