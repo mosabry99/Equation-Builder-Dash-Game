@@ -1,21 +1,31 @@
+import 'dart:math' as math;
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'player_component.dart';
 
-class FallingComponent extends PositionComponent with HasGameRef, CollisionCallbacks {
+class FallingComponent extends PositionComponent with HasGameReference, CollisionCallbacks {
   final String value;
   final double fallSpeed;
   bool collected = false;
+  double animationTime = 0.0;
+  double rotation = 0.0;
   
   final Paint bgPaint = Paint()
     ..color = const Color(0xFF6c5ce7)
     ..style = PaintingStyle.fill;
     
   final Paint glowPaint = Paint()
-    ..color = const Color(0xFF6c5ce7).withOpacity(0.4)
+    ..color = const Color(0xFF6c5ce7).withValues(alpha: 0.4)
     ..style = PaintingStyle.fill
     ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+  
+  // Helper getters
+  Color get itemColor => _isOperator
+      ? const Color(0xFFff6b6b) // Red for operators
+      : const Color(0xFF4ecdc4); // Cyan for numbers
+  
+  bool get _isOperator => ['+', '-', '*', '/'].contains(value);
 
   FallingComponent({
     required this.value,
@@ -37,6 +47,8 @@ class FallingComponent extends PositionComponent with HasGameRef, CollisionCallb
   void update(double dt) {
     super.update(dt);
     position.y += fallSpeed * dt;
+    animationTime += dt;
+    rotation += dt;
   }
 
   @override
@@ -88,7 +100,7 @@ class FallingComponent extends PositionComponent with HasGameRef, CollisionCallb
         end: Alignment.bottomRight,
         colors: [
           itemColor,
-          itemColor.withOpacity(0.8),
+          itemColor.withValues(alpha: 0.8),
         ],
       ).createShader(Rect.fromCenter(
         center: (size / 2).toOffset(),
@@ -102,7 +114,7 @@ class FallingComponent extends PositionComponent with HasGameRef, CollisionCallb
     canvas.drawRRect(
       bgRect,
       Paint()
-        ..color = Colors.white.withOpacity(0.4)
+        ..color = Colors.white.withValues(alpha: 0.4)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
@@ -113,7 +125,7 @@ class FallingComponent extends PositionComponent with HasGameRef, CollisionCallb
       final sparkleOpacity = (math.sin(sparkleTime) * 0.5 + 0.5) * 0.3;
       
       final sparklePaint = Paint()
-        ..color = Colors.white.withOpacity(sparkleOpacity)
+        ..color = Colors.white.withValues(alpha: sparkleOpacity)
         ..style = PaintingStyle.fill;
       
       canvas.drawCircle(
@@ -138,12 +150,12 @@ class FallingComponent extends PositionComponent with HasGameRef, CollisionCallb
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               offset: const Offset(2, 2),
               blurRadius: 4,
             ),
             Shadow(
-              color: itemColor.withOpacity(0.8),
+              color: itemColor.withValues(alpha: 0.8),
               offset: Offset.zero,
               blurRadius: 10,
             ),

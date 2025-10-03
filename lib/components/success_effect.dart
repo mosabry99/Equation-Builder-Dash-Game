@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-class SuccessEffect extends PositionComponent with HasGameRef {
+class SuccessEffect extends PositionComponent with HasGameReference {
   final Random _random = Random();
   final List<_Confetti> confetti = [];
   double lifetime = 0;
@@ -80,12 +80,12 @@ class SuccessEffect extends PositionComponent with HasGameRef {
         text: TextSpan(
           text: '✨ CORRECT! ✨',
           style: TextStyle(
-            color: Colors.white.withOpacity(opacity),
+            color: Colors.white.withValues(alpha: opacity),
             fontSize: 32,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
-                color: const Color(0xFF00ffff).withOpacity(opacity),
+                color: const Color(0xFF00ffff).withValues(alpha: opacity),
                 offset: const Offset(0, 0),
                 blurRadius: 20,
               ),
@@ -137,7 +137,7 @@ class _Confetti {
       canvas.rotate(rotation);
       
       final paint = Paint()
-        ..color = color.withOpacity(life.clamp(0.0, 1.0))
+        ..color = color.withValues(alpha: life.clamp(0.0, 1.0))
         ..style = PaintingStyle.fill;
       
       // Draw rectangle confetti

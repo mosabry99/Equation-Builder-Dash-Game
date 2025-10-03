@@ -115,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Color(0xFF00ffff).withOpacity(0.5),
+                                    color: Color(0xFF00ffff).withValues(alpha: 0.5),
                                     blurRadius: 30,
                                     spreadRadius: 10,
                                   ),
@@ -245,7 +245,6 @@ class _SplashScreenState extends State<SplashScreen>
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
         duration: Duration(seconds: duration),
-        repeat: true,
         builder: (context, value, child) {
           return Opacity(
             opacity: (math.sin(value * math.pi * 2) + 1) / 2,
@@ -268,7 +267,7 @@ class _SplashScreenState extends State<SplashScreen>
                       Color(0xFFff6b6b),
                       Color(0xFF6c5ce7),
                     ][index % 4]
-                        .withOpacity(0.5),
+                        .withValues(alpha: 0.5),
                     blurRadius: 10,
                   ),
                 ],
