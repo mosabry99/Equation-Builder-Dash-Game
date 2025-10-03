@@ -88,7 +88,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 _settings.setDarkMode(value);
                               });
                             },
-                            activeThumbColor: const Color(0xFF00ffff),
+                            activeColor: _settings.isDarkMode
+                                ? const Color(0xFF00ffff)
+                                : const Color(0xFF1976d2),
+                            activeTrackColor: _settings.isDarkMode
+                                ? const Color(0xFF00ffff).withValues(alpha: 0.5)
+                                : const Color(0xFF1976d2).withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -114,7 +119,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 _settings.setSoundEnabled(value);
                               });
                             },
-                            activeThumbColor: const Color(0xFF00ffff),
+                            activeColor: _settings.isDarkMode
+                                ? const Color(0xFF00ffff)
+                                : const Color(0xFF26de81),
+                            activeTrackColor: _settings.isDarkMode
+                                ? const Color(0xFF00ffff).withValues(alpha: 0.5)
+                                : const Color(0xFF26de81).withValues(alpha: 0.5),
                           ),
                         ),
                         _buildSettingTile(
@@ -132,7 +142,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 _settings.setMusicEnabled(value);
                               });
                             },
-                            activeThumbColor: const Color(0xFF00ffff),
+                            activeColor: _settings.isDarkMode
+                                ? const Color(0xFF6c5ce7)
+                                : const Color(0xFFffa726),
+                            activeTrackColor: _settings.isDarkMode
+                                ? const Color(0xFF6c5ce7).withValues(alpha: 0.5)
+                                : const Color(0xFFffa726).withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -146,14 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         _buildSettingTile(
                           icon: Icons.touch_app,
                           title: 'Touch Controls',
-                          subtitle: 'Tap left/right to move',
-                          trailing: const Icon(Icons.check_circle,
-                              color: Color(0xFF26de81)),
-                        ),
-                        _buildSettingTile(
-                          icon: Icons.keyboard,
-                          title: 'Keyboard Controls',
-                          subtitle: 'Arrow keys to move',
+                          subtitle: 'Tap left side to move left, right side to move right',
                           trailing: const Icon(Icons.check_circle,
                               color: Color(0xFF26de81)),
                         ),
