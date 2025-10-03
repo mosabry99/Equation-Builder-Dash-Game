@@ -12,17 +12,22 @@ import '../components/hud_component.dart';
 import '../components/explosion_effect.dart';
 import '../components/success_effect.dart';
 import '../managers/equation_manager.dart';
+import '../managers/settings_manager.dart';
 
 class EquationBuilderGame extends FlameGame
-    with HasCollisionDetection, KeyboardEvents {
+    with HasCollisionDetection, KeyboardEvents, TapDetector {
   late PlayerComponent player;
   late HudComponent hud;
   late EquationManager equationManager;
+  final SettingsManager settings = SettingsManager();
   
   Timer? spawnTimer;
   double spawnInterval = 2.0;
   int level = 1;
+  int score = 0;
   final Random random = Random();
+  bool isGameActive = true;
+  bool isProcessingSuccess = false;
   
   // Neon gradient background
   final Paint backgroundPaint = Paint()
