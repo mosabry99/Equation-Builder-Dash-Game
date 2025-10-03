@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-class ExplosionEffect extends PositionComponent with HasGameRef {
+class ExplosionEffect extends PositionComponent with HasGameReference {
   final Random _random = Random();
   final List<_Particle> particles = [];
   double lifetime = 0;
@@ -104,12 +104,12 @@ class ExplosionEffect extends PositionComponent with HasGameRef {
         text: TextSpan(
           text: selectedMessage,
           style: TextStyle(
-            color: Colors.white.withOpacity(opacity),
+            color: Colors.white.withValues(alpha: opacity),
             fontSize: 36,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
-                color: const Color(0xFFff6b6b).withOpacity(opacity),
+                color: const Color(0xFFff6b6b).withValues(alpha: opacity),
                 offset: const Offset(0, 0),
                 blurRadius: 20,
               ),
@@ -154,7 +154,7 @@ class _Particle {
   void render(Canvas canvas) {
     if (life > 0) {
       final paint = Paint()
-        ..color = color.withOpacity(life.clamp(0.0, 1.0))
+        ..color = color.withValues(alpha: life.clamp(0.0, 1.0))
         ..style = PaintingStyle.fill;
       
       canvas.drawCircle(position.toOffset(), size, paint);
