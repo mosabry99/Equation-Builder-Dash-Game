@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class ExplosionEffect extends PositionComponent with HasGameReference {
   final Random _random = Random();
-  final List<_Particle> particles = [];
+  final List<_Particle> _particles = [];
   double lifetime = 0;
   final double maxLifetime = 2.0;
   bool shakeApplied = false;
@@ -36,7 +36,7 @@ class ExplosionEffect extends PositionComponent with HasGameReference {
       final angle = _random.nextDouble() * 2 * pi;
       final speed = _random.nextDouble() * 200 + 100;
       
-      particles.add(_Particle(
+      _particles.add(_Particle(
         position: Vector2.zero(),
         velocity: Vector2(cos(angle), sin(angle)) * speed,
         color: _getRandomExplosionColor(),
@@ -68,7 +68,7 @@ class ExplosionEffect extends PositionComponent with HasGameReference {
     }
     
     // Update particles
-    for (var particle in particles) {
+    for (var particle in _particles) {
       particle.update(dt);
     }
     
@@ -88,7 +88,7 @@ class ExplosionEffect extends PositionComponent with HasGameReference {
     super.render(canvas);
     
     // Draw particles
-    for (var particle in particles) {
+    for (var particle in _particles) {
       particle.render(canvas);
     }
     

@@ -28,7 +28,7 @@ class HudComponent extends PositionComponent with HasGameReference {
   Future<void> onLoad() async {
     await super.onLoad();
     position = Vector2(20, 40);
-    size = Vector2(gameRef.size.x - 40, 120);
+    size = Vector2(game.size.x - 40, 120);
   }
 
   void updateDisplay() {
@@ -135,7 +135,7 @@ class HudComponent extends PositionComponent with HasGameReference {
   
   int _getScore() {
     try {
-      return (gameRef as dynamic).getScore();
+      return (game as dynamic).getScore();
     } catch (e) {
       return 0;
     }
