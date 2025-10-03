@@ -32,20 +32,32 @@ class EquationBuilderGame extends FlameGame
   bool isGameActive = true;
   bool isProcessingSuccess = false;
   
-  // Neon gradient background
-  final Paint backgroundPaint = Paint()
-    ..shader = const LinearGradient(
+  // Dynamic background paint (updated based on theme)
+  Paint backgroundPaint = Paint();
+  
+  void _updateBackgroundPaint() {
+    final isDark = settings.isDarkMode;
+    backgroundPaint.shader = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [
-        Color(0xFF0a0e27),
-        Color(0xFF1a1f3a),
-        Color(0xFF2a1f4a),
-      ],
-    ).createShader(const Rect.fromLTWH(0, 0, 1000, 2000));
+      colors: isDark
+          ? [
+              const Color(0xFF0a0e27),
+              const Color(0xFF1a1f3a),
+              const Color(0xFF2a1f4a),
+            ]
+          : [
+              const Color(0xFFe3f2fd),
+              const Color(0xFFbbdefb),
+              const Color(0xFF90caf9),
+            ],
+    ).createShader(Rect.fromLTWH(0, 0, size.x, size.y));
+  }
 
   @override
-  Color backgroundColor() => const Color(0xFF0a0e27);
+  Color backgroundColor() => settings.isDarkMode 
+      ? const Color(0xFF0a0e27)
+      : const Color(0xFFe3f2fd);
 
   @override
   Future<void> onLoad() async {
@@ -53,6 +65,9 @@ class EquationBuilderGame extends FlameGame
     
     // Initialize audio
     await audio.initialize();
+    
+    // Initialize background with current theme
+    _updateBackgroundPaint();
     
     equationManager = EquationManager(level: level);
     

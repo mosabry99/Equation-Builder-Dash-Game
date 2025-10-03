@@ -157,7 +157,7 @@ class _GameScreenState extends State<GameScreen> {
                       ),
                     );
                     setState(() {
-                      // Refresh game with new theme
+                      // Recreate game with new theme
                       _game = EquationBuilderGame();
                     });
                     widget.onThemeChanged?.call();
