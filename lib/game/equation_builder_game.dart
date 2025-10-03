@@ -17,7 +17,7 @@ import '../managers/audio_manager.dart';
 import '../widgets/game_over_dialog.dart';
 
 class EquationBuilderGame extends FlameGame
-    with HasCollisionDetection, TapDetector {
+    with HasCollisionDetection, TapDetector, PanDetector {
   late PlayerComponent player;
   late HudComponent hud;
   late EquationManager equationManager;
@@ -115,14 +115,20 @@ class EquationBuilderGame extends FlameGame
     audio.playCollectSound();
     hud.updateDisplay();
     
-    // Check if equation equals target automatically
-    if (equationManager.equalsTarget()) {
+    // Get current sum
+    final currentSum = equationManager.getCurrentSum();
+    final target = equationManager.getTarget();
+    
+    // Check conditions after every number collected
+    if (currentSum < target) {
+      // Continue game - sum is still below target
+      return;
+    } else if (currentSum == target) {
+      // Exact match - show success and advance to next level
       _handleSuccess();
       return;
-    }
-    
-    // Check if it's impossible to reach target
-    if (equationManager.isImpossibleToReachTarget()) {
+    } else {
+      // Sum exceeds target - game over
       _showGameOverDialog();
     }
   }
@@ -222,10 +228,62 @@ class EquationBuilderGame extends FlameGame
     
     // Left side tap = move left, Right side tap = move right
     if (tapX < screenWidth / 2) {
-      player.moveLeft();
+      player.startMovingLeft();
     } else {
-      player.moveRight();
+      player.startMovingRight();
     }
+  }
+  
+  @override
+  void onTapUp(TapUpInfo info) {
+    super.onTapUp(info);
+    // Stop movement when tap is released
+    player.stopMoving();
+  }
+  
+  @override
+  void onPanStart(DragStartInfo info) {
+    super.onPanStart(info);
+    
+    // Get pan start position
+    final panX = info.eventPosition.global.x;
+    final screenWidth = size.x;
+    
+    // Left side = move left continuously, Right side = move right continuously
+    if (panX < screenWidth / 2) {
+      player.startMovingLeft();
+    } else {
+      player.startMovingRight();
+    }
+  }
+  
+  @override
+  void onPanUpdate(DragUpdateInfo info) {
+    super.onPanUpdate(info);
+    
+    // Update movement direction based on current pan position
+    final panX = info.eventPosition.global.x;
+    final screenWidth = size.x;
+    
+    if (panX < screenWidth / 2) {
+      player.startMovingLeft();
+    } else {
+      player.startMovingRight();
+    }
+  }
+  
+  @override
+  void onPanEnd(DragEndInfo info) {
+    super.onPanEnd(info);
+    // Stop movement when pan ends
+    player.stopMoving();
+  }
+  
+  @override
+  void onPanCancel() {
+    super.onPanCancel();
+    // Stop movement if pan is cancelled
+    player.stopMoving();
   }
 
   @override

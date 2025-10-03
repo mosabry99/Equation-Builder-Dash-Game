@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flame/game.dart';
 import 'game/equation_builder_game.dart';
 import 'screens/splash_screen.dart';
+import 'screens/main_menu_screen.dart';
 import 'screens/settings_screen.dart';
 import 'managers/settings_manager.dart';
 import 'widgets/game_over_dialog.dart';
@@ -64,7 +65,7 @@ class _EquationBuilderAppState extends State<EquationBuilderApp> {
                 });
               },
             )
-          : GameScreen(onThemeChanged: _updateTheme),
+          : const MainMenuScreen(), // Show main menu after splash
     );
   }
 }
