@@ -10,7 +10,7 @@ class ExplosionEffect extends PositionComponent with HasGameReference {
   double lifetime = 0;
   final double maxLifetime = 2.0;
   bool shakeApplied = false;
-  final SettingsManager settings = SettingsManager();
+  final SettingsManager settings;
   late GameTheme theme;
   
   static final List<String> funnyMessages = [

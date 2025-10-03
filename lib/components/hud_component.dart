@@ -130,7 +130,7 @@ class HudComponent extends PositionComponent with HasGameReference {
       ..color = theme.hudBorder
       ..strokeWidth = 1;
     canvas.drawLine(
-      Offset(15, 42),
+      const Offset(15, 42),
       Offset(size.x - 15, 42),
       dividerPaint,
     );
