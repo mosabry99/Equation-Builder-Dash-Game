@@ -52,8 +52,8 @@ class PlayerComponent extends PositionComponent with HasGameReference, Collision
     // Boundary checking
     if (position.x < size.x / 2) {
       position.x = size.x / 2;
-    } else if (position.x > gameRef.size.x - size.x / 2) {
-      position.x = gameRef.size.x - size.x / 2;
+    } else if (position.x > game.size.x - size.x / 2) {
+      position.x = game.size.x - size.x / 2;
     }
     
     // Damping

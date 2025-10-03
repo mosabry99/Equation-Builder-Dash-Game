@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class SuccessEffect extends PositionComponent with HasGameReference {
   final Random _random = Random();
-  final List<_Confetti> confetti = [];
+  final List<_Confetti> _confetti = [];
   double lifetime = 0;
   final double maxLifetime = 2.0;
 
@@ -22,7 +22,7 @@ class SuccessEffect extends PositionComponent with HasGameReference {
       final angle = _random.nextDouble() * 2 * pi;
       final speed = _random.nextDouble() * 300 + 150;
       
-      confetti.add(_Confetti(
+      _confetti.add(_Confetti(
         position: Vector2.zero(),
         velocity: Vector2(cos(angle), sin(angle)) * speed,
         color: _getRandomConfettiColor(),
@@ -52,7 +52,7 @@ class SuccessEffect extends PositionComponent with HasGameReference {
     lifetime += dt;
     
     // Update confetti
-    for (var piece in confetti) {
+    for (var piece in _confetti) {
       piece.update(dt);
     }
     
@@ -67,7 +67,7 @@ class SuccessEffect extends PositionComponent with HasGameReference {
     super.render(canvas);
     
     // Draw confetti
-    for (var piece in confetti) {
+    for (var piece in _confetti) {
       piece.render(canvas);
     }
     
